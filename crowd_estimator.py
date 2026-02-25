@@ -84,12 +84,24 @@ def main(src):
         count = int(np.interp(smooth_d, [D_MIN, D_MAX], [COUNT_MIN, COUNT_MAX]))
 
         # Convert edges to 3 channel image for overlay
-        display = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+        edge_display = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
 
-        draw_overlay(display, smooth_d, count)
-        display = resize_frame(display)
+        # Draw overlay only on edge view
+        draw_overlay(edge_display, smooth_d, count)
 
-        cv2.imshow(WINDOW, display)
+        # Resize both frames to same height
+        orig_resized = resize_frame(frame)
+        edge_resized = resize_frame(edge_display)
+
+        # Make heights equal (important for hconcat)
+        h = min(orig_resized.shape[0], edge_resized.shape[0])
+        orig_resized = orig_resized[:h, :]
+        edge_resized = edge_resized[:h, :]
+
+        # Combine side by side
+        combined = cv2.hconcat([orig_resized, edge_resized])
+
+        cv2.imshow(WINDOW, combined)
 
         # Press 'q' to exit
         if cv2.waitKey(DELAY) & 0xFF == ord('q'):
