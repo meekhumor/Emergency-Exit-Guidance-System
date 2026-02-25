@@ -7,7 +7,7 @@ WINDOW = "Crowd Estimator"
 SMOOTH = 0.05          
 DELAY = 30             
 
-# Resize limits (auto-fit inside these bounds)
+# Resize limits 
 MAX_WIDTH = 1000
 MAX_HEIGHT = 1500
 
@@ -31,7 +31,7 @@ def get_level(d):
     return 3
 
 
-# Process frame → edge detection + density calculation
+# Process frame [edge detection + density calculation]
 def process(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -59,7 +59,6 @@ def resize_frame(frame):
 
 
 def main(src):
-    # Open video/webcam source
     cap = cv2.VideoCapture(src)
     if not cap.isOpened():
         print("Cannot open source")
@@ -84,7 +83,7 @@ def main(src):
         # Estimate crowd count from density
         count = int(np.interp(smooth_d, [D_MIN, D_MAX], [COUNT_MIN, COUNT_MAX]))
 
-        # Convert edges to 3-channel image for overlay
+        # Convert edges to 3 channel image for overlay
         display = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
 
         draw_overlay(display, smooth_d, count)
